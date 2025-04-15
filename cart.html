@@ -35,7 +35,6 @@
       if (cart.length === 0) {
         emptyCartMessage.style.display = "block";
         cartTotalDisplay.style.display = "none";
-
         checkoutBtn.style.pointerEvents = "none";
         checkoutBtn.style.opacity = "0.5";
         checkoutBtn.textContent = "Cart is Empty";
@@ -44,7 +43,6 @@
 
       emptyCartMessage.style.display = "none";
       cartTotalDisplay.style.display = "block";
-
       checkoutBtn.style.pointerEvents = "auto";
       checkoutBtn.style.opacity = "1";
       checkoutBtn.textContent = "Buy Now";
