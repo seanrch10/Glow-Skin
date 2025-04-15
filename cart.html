@@ -50,11 +50,7 @@
             <h3>${item.name}</h3>
             <p>Color: ${item.color}</p>
             <p>Price: €${(item.price / 100).toFixed(2)}</p>
-            <div class="quantity-control">
-              <button class="decrease" data-index="${index}">–</button>
-              <span>${item.quantity}</span>
-              <button class="increase" data-index="${index}">+</button>
-            </div>
+            <p>Quantity: ${item.quantity}</p>
             <button class="remove" data-index="${index}">Remove</button>
           </div>
         `;
@@ -65,39 +61,17 @@
 
       cartTotalDisplay.textContent = `Total: €${(total / 100).toFixed(2)}`;
 
-      // Button logic
-      document.querySelectorAll(".increase").forEach(btn =>
-        btn.addEventListener("click", e => {
-          const index = e.target.dataset.index;
-          cart[index].quantity++;
-          saveAndRefresh();
-        })
-      );
-
-      document.querySelectorAll(".decrease").forEach(btn =>
-        btn.addEventListener("click", e => {
-          const index = e.target.dataset.index;
-          if (cart[index].quantity > 1) {
-            cart[index].quantity--;
-          } else {
-            cart.splice(index, 1);
-          }
-          saveAndRefresh();
-        })
-      );
-
+      // Remove button
       document.querySelectorAll(".remove").forEach(btn =>
         btn.addEventListener("click", e => {
           const index = e.target.dataset.index;
           cart.splice(index, 1);
-          saveAndRefresh();
+          localStorage.setItem("glowskin_cart", JSON.stringify(cart));
+          localStorage.setItem("cartCount", "0");
+          updateCartDisplay();
+          document.getElementById("cart-count")?.textContent = "0";
         })
       );
-    }
-
-    function saveAndRefresh() {
-      localStorage.setItem("glowskin_cart", JSON.stringify(cart));
-      updateCartDisplay();
     }
 
     updateCartDisplay();
