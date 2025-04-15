@@ -4,8 +4,31 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Laser Hair Removal Pen</title>
-  <link rel="stylesheet" href="style.css" />  
+  <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    @keyframes bounce {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.2); }
+    }
+
+    @keyframes flash {
+      0% { background-color: #111; color: #fff; }
+      50% { background-color: #0f0; color: #000; }
+      100% { background-color: #111; color: #fff; }
+    }
+
+    .cart-link.animated {
+      animation: bounce 0.3s ease;
+    }
+
+    #cart-count.flash {
+      animation: flash 0.5s ease;
+      padding: 0 6px;
+      border-radius: 12px;
+    }
+  </style>
 </head>
 <body>
 
@@ -32,7 +55,7 @@
       <h2>GlowSkin™ IPL Hair Removal Pen</h2>
       <p>Say goodbye to razors, waxing, and irritation. Our advanced IPL pen removes hair in just minutes and is safe to use on all skin tones. Designed for face, legs, underarms, and bikini area.</p>
       <h3>€59.99</h3>
-<p><strong>Color:</strong> White</p>
+      <p><strong>Color:</strong> White</p>
       <button id="add-to-cart">Add to Cart</button>
     </div>
   </section>
@@ -41,49 +64,38 @@
     <p>&copy; 2025 GlowSkin™. All rights reserved.</p>
   </footer>
 
- <script>
-  let cart = JSON.parse(localStorage.getItem("glowskin_cart")) || [];
-  const cartIcon = document.querySelector(".cart-link");
-  const cartCountEl = document.getElementById("cart-count");
+  <script>
+    const cartIcon = document.querySelector(".cart-link");
+    const cartCountEl = document.getElementById("cart-count");
 
-  // Load initial count
-  const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-  cartCountEl.textContent = totalCount;
+    // Load initial count from localStorage
+    let cart = JSON.parse(localStorage.getItem("glowskin_cart")) || [];
+    const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    cartCountEl.textContent = totalCount;
 
-  document.getElementById("add-to-cart").addEventListener("click", () => {
-const selectedVariant = "White";
+    // Add to cart — only 1 item allowed
+    document.getElementById("add-to-cart").addEventListener("click", () => {
+      const product = {
+        name: "GlowSkin™ IPL Hair Removal Pen",
+        price: 5999, // €59.99 in cents
+        color: "White",
+        quantity: 1
+      };
 
-    const product = {
-      name: "GlowSkin™ IPL Hair Removal Pen",
-      price: 6999,
-      color: selectedVariant,
-      quantity: 1
-    };
+      // Overwrite cart with only one item
+      localStorage.setItem("glowskin_cart", JSON.stringify([product]));
+      localStorage.setItem("cartCount", 1);
+      cartCountEl.textContent = 1;
 
-    const existingItem = cart.find(
-      item => item.name === product.name && item.color === product.color
-    );
+      // Animate cart icon and count
+      cartIcon.classList.add("animated");
+      cartCountEl.classList.add("flash");
 
-    if (existingItem) {
-      existingItem.quantity += 1;
-    } else {
-      cart.push(product);
-    }
-
-    localStorage.setItem("glowskin_cart", JSON.stringify(cart));
-
-    // Update and animate count
-    const newCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-    cartCountEl.textContent = newCount;
-
-    // Trigger animations
-    cartIcon.classList.add("animated");
-    cartCountEl.classList.add("flash");
-
-    // Remove animation classes after they run
-    setTimeout(() => {
-      cartIcon.classList.remove("animated");
-      cartCountEl.classList.remove("flash");
-    }, 500);
-  });
-</script>
+      setTimeout(() => {
+        cartIcon.classList.remove("animated");
+        cartCountEl.classList.remove("flash");
+      }, 500);
+    });
+  </script>
+</body>
+</html>
