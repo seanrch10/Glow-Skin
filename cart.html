@@ -67,8 +67,8 @@
           cart.splice(index, 1);
           localStorage.setItem("glowskin_cart", JSON.stringify(cart));
           localStorage.setItem("cartCount", "0");
-          document.getElementById("cart-count")?.textContent = "0";
           updateCartDisplay();
+          document.getElementById("cart-count")?.textContent = "0";
         })
       );
     }
@@ -78,4 +78,3 @@
 
 </body>
 </html>
-
