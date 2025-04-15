@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Checkout</title>
+  <script src="https://js.stripe.com/v3/"></script>
+  <link rel="stylesheet" href="checkout.css" />
+  <style>
+    #payment-form {
+      max-width: 500px;
+      margin: 3rem auto;
+      padding: 2rem;
+      background: #f9f9f9;
+      border-radius: 12px;
+    }
+
+    .form-row {
+      margin-bottom: 20px;
+    }
+
+    #card-element {
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      background: #fff;
+    }
+
+    #submit {
+      background: #111;
+      color: #fff;
+      padding: 1rem;
+      width: 100%;
+      border: none;
+      border-radius: 30px;
+      font-weight: 600;
+      font-size: 1rem;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <form id="payment-form">
+    <h2>Complete Your Payment</h2>
+
+    <div class="form-row">
+      <label>Full Name</label>
+      <input type="text" id="name" required />
+    </div>
+
+    <div class="form-row">
+      <label>Email Address</label>
+      <input type="email" id="email" required />
+    </div>
+
+    <div class="form-row">
+      <label>Phone Number</label>
+      <input type="tel" id="phone" required />
+    </div>
+
+    <div class="form-row">
+      <label>Address Line</label>
+      <input type="text" id="address-line1" required />
+    </div>
+
+    <div class="form-row">
+      <label>City</label>
+      <input type="text" id="city" required />
+    </div>
+
+    <div class="form-row">
+      <label>Postal Code</label>
+      <input type="text" id="postal-code" required />
+    </div>
+
+    <div class="form-row">
+      <label>Country</label>
+      <input type="text" id="country" required />
+    </div>
+
+    <div class="form-row">
+      <label>Card Info</label>
+      <div id="card-element"></div>
+    </div>
+
+    <button id="submit">Pay €69.99</button>
+    <div id="error-message" style="color: red; margin-top: 1rem;"></div>
+  </form>
+
+  <script>
+    const stripe = Stripe("pk_live_51RE6pFFkXZKHpcIsmfCs4mnhkwXaYNm5s8hMcJUUYYe4sERCTyc3I3rbUgj2h9RNyqfFbyjEP3PB14CLIwxyOWY8007a6t2Dq");
+    const elements = stripe.elements();
+
+    // ✅ HIDE Stripe’s built-in postal code input
+    const card = elements.create("card", {
+      hidePostalCode: true
+    });
+
+    card.mount("#card-element");
+
+    const form = document.getElementById("payment-form");
+    const errorMessage = document.getElementById("error-message");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const billingDetails = {
+        name: document.getElementById("name").value,
+        email: document.getElementById("email").value,
+        phone: document.getElementById("phone").value,
+        address: {
+          line1: document.getElementById("address-line1").value,
+          city: document.getElementById("city").value,
+          postal_code: document.getElementById("postal-code").value,
+          country: document.getElementById("country").value.toUpperCase()
+        }
+      };
+
+      const res = await fetch("https://glow-skin-backend.onrender.com/create-payment-intent", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          amount: 6999,
+          email: billingDetails.email
+        })
+      });
+
+      const data = await res.json();
+
+      const { error, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, {
+        payment_method: {
+          card: card,
+          billing_details: billingDetails
+        }
+      });
+
+      if (error) {
+        errorMessage.textContent = error.message;
+      } else {
+        if (paymentIntent.status === "succeeded") {
+          window.location.href = "thankyou.html";
+        }
+      }
+    });
+  </script>
+
+</body>
+</html>
+
+
+
+

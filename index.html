@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Laser Hair Removal Pen</title>
+  <link rel="stylesheet" href="style.css" />  
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">GlowSkin™</div>
+    <a href="cart.html" class="cart-link">
+      🛒 <span id="cart-count">0</span>
+    </a>      
+  </nav>
+
+  <header class="hero">
+    <div class="hero-text">
+      <h1>Laser Hair Removal Pen</h1>
+      <p>Painless, effective, and safe hair removal from the comfort of your home.</p>
+      <a href="#product" class="cta-button">Shop Now</a>
+    </div>
+  </header>
+
+  <section id="product" class="product-section">
+    <div class="product-image">
+      <img src="https://i.ibb.co/nXFybhp/Laser-Hair-Removal-Drop-Shipping.jpg" alt="Laser Hair Removal Pen">
+    </div>
+    <div class="product-info">
+      <h2>GlowSkin™ IPL Hair Removal Pen</h2>
+      <p>Say goodbye to razors, waxing, and irritation. Our advanced IPL pen removes hair in just minutes and is safe to use on all skin tones. Designed for face, legs, underarms, and bikini area.</p>
+      <h3>€69.99</h3>
+      <label for="variant">Choose Color:</label>
+      <select id="variant">
+        <option value="white">White</option>
+        <option value="pink">Pink</option>
+        <option value="blue">Blue</option>
+      </select>
+      <button id="add-to-cart">Add to Cart</button>
+    </div>
+  </section>
+
+  <footer>
+    <p>&copy; 2025 GlowSkin™. All rights reserved.</p>
+  </footer>
+
+  <script>
+    // ✅ Load the cart and count on page load
+    let cart = JSON.parse(localStorage.getItem("glowskin_cart")) || [];
+    const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    document.getElementById("cart-count").textContent = cartCount;
+  
+    // ✅ Add to cart logic
+    document.getElementById("add-to-cart").addEventListener("click", () => {
+      const selectedVariant = document.getElementById("variant").value;
+  
+      const product = {
+        name: "GlowSkin™ IPL Hair Removal Pen",
+        price: 6999,
+        color: selectedVariant,
+        quantity: 1
+      };
+  
+      let cart = JSON.parse(localStorage.getItem("glowskin_cart")) || [];
+  
+      const existingItem = cart.find(item => item.name === product.name && item.color === product.color);
+  
+      if (existingItem) {
+        existingItem.quantity += 1;
+      } else {
+        cart.push(product);
+      }
+  
+      localStorage.setItem("glowskin_cart", JSON.stringify(cart));
+  
+      const updatedCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById("cart-count").textContent = updatedCount;
+    });
+  </script>
+  
+</body>
+</html>
+
+
+
+
