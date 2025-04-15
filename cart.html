@@ -13,11 +13,19 @@
   <div class="cart-container">
     <h1>Your Cart</h1>
 
+    <!-- Container for cart items -->
     <div id="cart-items"></div>
+
+    <!-- Message if cart is empty -->
     <div id="empty-cart" class="empty-cart" style="display: none;">Your cart is empty.</div>
+
+    <!-- Total price -->
     <div id="cart-total" class="cart-total"></div>
 
+    <!-- Stripe Checkout Button -->
     <a href="https://buy.stripe.com/dR6bKed8r5Al09y000" class="checkout-btn" target="_blank">Buy Now</a>
+
+    <!-- Back to shop -->
     <a href="index.html" class="go-back">← Continue Shopping</a>
   </div>
 
@@ -67,8 +75,8 @@
           cart.splice(index, 1);
           localStorage.setItem("glowskin_cart", JSON.stringify(cart));
           localStorage.setItem("cartCount", "0");
-          updateCartDisplay();
           document.getElementById("cart-count")?.textContent = "0";
+          updateCartDisplay();
         })
       );
     }
@@ -78,3 +86,4 @@
 
 </body>
 </html>
+
