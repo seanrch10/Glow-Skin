@@ -84,6 +84,26 @@ body {
     background: #333;
     transform: scale(1.02);
   }
+
+.cart-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  border-bottom: 1px solid #eee;
+  padding: 1.2rem 0;
+}
+
+.cart-image {
+  width: 100px;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.cart-item-details {
+  flex: 1;
+}
+
   
   
   
