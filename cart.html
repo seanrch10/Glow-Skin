@@ -21,68 +21,77 @@
     <a href="index.html" class="go-back">← Continue Shopping</a>
   </div>
 
-  <script>
-    const cart = JSON.parse(localStorage.getItem("glowskin_cart")) || [];
-    const cartItemsContainer = document.getElementById("cart-items");
-    const cartTotalDisplay = document.getElementById("cart-total");
-    const emptyCartMessage = document.getElementById("empty-cart");
-    const checkoutBtn = document.getElementById("buy-now");
+ <script>
+  const cart = JSON.parse(localStorage.getItem("glowskin_cart")) || [];
+  const cartItemsContainer = document.getElementById("cart-items");
+  const cartTotalDisplay = document.getElementById("cart-total");
+  const emptyCartMessage = document.getElementById("empty-cart");
+  const checkoutBtn = document.getElementById("buy-now");
 
-    function updateCartDisplay() {
-      cartItemsContainer.innerHTML = "";
-      let total = 0;
+  function updateCartDisplay() {
+    cartItemsContainer.innerHTML = "";
+    let total = 0;
 
-      if (cart.length === 0) {
-        emptyCartMessage.style.display = "block";
-        cartTotalDisplay.style.display = "none";
-        checkoutBtn.style.pointerEvents = "none";
-        checkoutBtn.style.opacity = "0.5";
-        checkoutBtn.textContent = "Cart is Empty";
-        return;
-      }
+    if (cart.length === 0) {
+      emptyCartMessage.style.display = "block";
+      cartTotalDisplay.style.display = "none";
 
-      emptyCartMessage.style.display = "none";
-      cartTotalDisplay.style.display = "block";
+      // visually disable
       checkoutBtn.style.pointerEvents = "auto";
-      checkoutBtn.style.opacity = "1";
-      checkoutBtn.textContent = "Buy Now";
+      checkoutBtn.style.opacity = "0.5";
+      checkoutBtn.textContent = "Cart is Empty";
 
-      cart.forEach((item, index) => {
-        const itemDiv = document.createElement("div");
-        itemDiv.classList.add("cart-item");
-
-        itemDiv.innerHTML = `
-          <img src="https://i.ibb.co/nXFybhp/Laser-Hair-Removal-Drop-Shipping.jpg" alt="GlowSkin IPL" class="cart-image">
-          <div class="cart-item-details">
-            <h3>${item.name}</h3>
-            <p><strong>Color:</strong> ${item.color}</p>
-            <p><strong>Quantity:</strong> ${item.quantity}</p>
-            <p><strong>Price:</strong> €${(item.price / 100).toFixed(2)}</p>
-            <button class="remove" data-index="${index}">Remove</button>
-          </div>
-        `;
-
-        cartItemsContainer.appendChild(itemDiv);
-        total += item.price * item.quantity;
+      // prevent link from working
+      checkoutBtn.addEventListener("click", function (e) {
+        e.preventDefault();
       });
 
-      cartTotalDisplay.textContent = `Total: €${(total / 100).toFixed(2)}`;
-
-      document.querySelectorAll(".remove").forEach(btn =>
-        btn.addEventListener("click", e => {
-          const index = e.target.dataset.index;
-          cart.splice(index, 1);
-          localStorage.setItem("glowskin_cart", JSON.stringify(cart));
-          localStorage.setItem("cartCount", "0");
-          document.getElementById("cart-count")?.textContent = "0";
-          updateCartDisplay();
-        })
-      );
+      return;
     }
 
-    updateCartDisplay();
-  </script>
+    emptyCartMessage.style.display = "none";
+    cartTotalDisplay.style.display = "block";
 
-</body>
+    checkoutBtn.style.pointerEvents = "auto";
+    checkoutBtn.style.opacity = "1";
+    checkoutBtn.textContent = "Buy Now";
+
+    cart.forEach((item, index) => {
+      const itemDiv = document.createElement("div");
+      itemDiv.classList.add("cart-item");
+
+      itemDiv.innerHTML = `
+        <img src="https://i.ibb.co/nXFybhp/Laser-Hair-Removal-Drop-Shipping.jpg" alt="GlowSkin IPL" class="cart-image">
+        <div class="cart-item-details">
+          <h3>${item.name}</h3>
+          <p><strong>Color:</strong> ${item.color}</p>
+          <p><strong>Quantity:</strong> ${item.quantity}</p>
+          <p><strong>Price:</strong> €${(item.price / 100).toFixed(2)}</p>
+          <button class="remove" data-index="${index}">Remove</button>
+        </div>
+      `;
+
+      cartItemsContainer.appendChild(itemDiv);
+      total += item.price * item.quantity;
+    });
+
+    cartTotalDisplay.textContent = `Total: €${(total / 100).toFixed(2)}`;
+
+    document.querySelectorAll(".remove").forEach(btn =>
+      btn.addEventListener("click", e => {
+        const index = e.target.dataset.index;
+        cart.splice(index, 1);
+        localStorage.setItem("glowskin_cart", JSON.stringify(cart));
+        localStorage.setItem("cartCount", "0");
+        document.getElementById("cart-count")?.textContent = "0";
+        updateCartDisplay();
+      })
+    );
+  }
+
+  updateCartDisplay();
+</script>
+
+
+  </body>
 </html>
-
