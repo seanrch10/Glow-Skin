@@ -6,29 +6,6 @@
   <title>Laser Hair Removal Pen</title>
   <link rel="stylesheet" href="style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
-
-  <style>
-    @keyframes bounce {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-    }
-
-    @keyframes flash {
-      0% { background-color: #111; color: #fff; }
-      50% { background-color: #0f0; color: #000; }
-      100% { background-color: #111; color: #fff; }
-    }
-
-    .cart-link.animated {
-      animation: bounce 0.3s ease;
-    }
-
-    #cart-count.flash {
-      animation: flash 0.5s ease;
-      padding: 0 6px;
-      border-radius: 12px;
-    }
-  </style>
 </head>
 <body>
 
@@ -68,26 +45,22 @@
     const cartIcon = document.querySelector(".cart-link");
     const cartCountEl = document.getElementById("cart-count");
 
-    // Load initial count from localStorage
     let cart = JSON.parse(localStorage.getItem("glowskin_cart")) || [];
     const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
     cartCountEl.textContent = totalCount;
 
-    // Add to cart — only 1 item allowed
     document.getElementById("add-to-cart").addEventListener("click", () => {
       const product = {
         name: "GlowSkin™ IPL Hair Removal Pen",
-        price: 5999, // €59.99 in cents
+        price: 5999,
         color: "White",
         quantity: 1
       };
 
-      // Overwrite cart with only one item
       localStorage.setItem("glowskin_cart", JSON.stringify([product]));
       localStorage.setItem("cartCount", 1);
       cartCountEl.textContent = 1;
 
-      // Animate cart icon and count
       cartIcon.classList.add("animated");
       cartCountEl.classList.add("flash");
 
