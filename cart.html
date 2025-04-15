@@ -1,81 +1,66 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Your Cart - GlowSkin™</title>
-  <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="cart.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
-</head>
-<body>
+<div class="cart-container">
+  <h1>Your Cart</h1>
 
-  <div class="cart-container">
-    <h1>Your Cart</h1>
+  <div id="cart-items"></div>
+  <div id="empty-cart" class="empty-cart" style="display: none;">Your cart is empty.</div>
+  <div id="cart-total" class="cart-total"></div>
 
-    <div id="cart-items"></div>
-    <div id="empty-cart" class="empty-cart" style="display: none;">Your cart is empty.</div>
-    <div id="cart-total" class="cart-total"></div>
+  <a href="https://buy.stripe.com/dR6bKed8r5Al09y000" class="checkout-btn" target="_blank">Buy Now</a>
+  <a href="index.html" class="go-back">← Continue Shopping</a>
+</div>
 
-    <a href="https://buy.stripe.com/dR6bKed8r5Al09y000" class="checkout-btn" target="_blank">Buy Now</a>
-    <a href="index.html" class="go-back">← Continue Shopping</a>
-  </div>
+<script>
+  let cart = JSON.parse(localStorage.getItem("glowskin_cart")) || [];
+  const cartItemsContainer = document.getElementById("cart-items");
+  const cartTotalDisplay = document.getElementById("cart-total");
+  const emptyCartMessage = document.getElementById("empty-cart");
 
-  <script>
-    let cart = JSON.parse(localStorage.getItem("glowskin_cart")) || [];
-    const cartItemsContainer = document.getElementById("cart-items");
-    const cartTotalDisplay = document.getElementById("cart-total");
-    const emptyCartMessage = document.getElementById("empty-cart");
+  function updateCartDisplay() {
+    cartItemsContainer.innerHTML = "";
+    let total = 0;
 
-    function updateCartDisplay() {
-      cartItemsContainer.innerHTML = "";
-      let total = 0;
-
-      if (cart.length === 0) {
-        emptyCartMessage.style.display = "block";
-        cartTotalDisplay.style.display = "none";
-        return;
-      }
-
-      emptyCartMessage.style.display = "none";
-      cartTotalDisplay.style.display = "block";
-
-      cart.forEach((item, index) => {
-        const itemDiv = document.createElement("div");
-        itemDiv.classList.add("cart-item");
-
-        itemDiv.innerHTML = `
-          <img src="https://i.ibb.co/nXFybhp/Laser-Hair-Removal-Drop-Shipping.jpg" alt="GlowSkin IPL" class="cart-image">
-          <div class="cart-item-details">
-            <h3>${item.name}</h3>
-            <p>Color: ${item.color}</p>
-            <p>Price: €${(item.price / 100).toFixed(2)}</p>
-            <p>Quantity: ${item.quantity}</p>
-            <button class="remove" data-index="${index}">Remove</button>
-          </div>
-        `;
-
-        cartItemsContainer.appendChild(itemDiv);
-        total += item.price * item.quantity;
-      });
-
-      cartTotalDisplay.textContent = `Total: €${(total / 100).toFixed(2)}`;
-
-      // Remove button
-      document.querySelectorAll(".remove").forEach(btn =>
-        btn.addEventListener("click", e => {
-          const index = e.target.dataset.index;
-          cart.splice(index, 1);
-          localStorage.setItem("glowskin_cart", JSON.stringify(cart));
-          localStorage.setItem("cartCount", "0");
-          updateCartDisplay();
-          document.getElementById("cart-count")?.textContent = "0";
-        })
-      );
+    if (cart.length === 0) {
+      emptyCartMessage.style.display = "block";
+      cartTotalDisplay.style.display = "none";
+      return;
     }
 
-    updateCartDisplay();
-  </script>
+    emptyCartMessage.style.display = "none";
+    cartTotalDisplay.style.display = "block";
 
-</body>
-</html>
+    cart.forEach((item, index) => {
+      const itemDiv = document.createElement("div");
+      itemDiv.classList.add("cart-item");
+
+      itemDiv.innerHTML = `
+        <img src="https://i.ibb.co/nXFybhp/Laser-Hair-Removal-Drop-Shipping.jpg" alt="GlowSkin IPL" class="cart-image">
+        <div class="cart-item-details">
+          <h3>${item.name}</h3>
+          <p><strong>Color:</strong> ${item.color}</p>
+          <p><strong>Quantity:</strong> ${item.quantity}</p>
+          <p><strong>Price:</strong> €${(item.price / 100).toFixed(2)}</p>
+          <button class="remove" data-index="${index}">Remove</button>
+        </div>
+      `;
+
+      cartItemsContainer.appendChild(itemDiv);
+      total += item.price * item.quantity;
+    });
+
+    cartTotalDisplay.textContent = `Total: €${(total / 100).toFixed(2)}`;
+
+    document.querySelectorAll(".remove").forEach(btn =>
+      btn.addEventListener("click", e => {
+        const index = e.target.dataset.index;
+        cart.splice(index, 1);
+        localStorage.setItem("glowskin_cart", JSON.stringify(cart));
+        localStorage.setItem("cartCount", "0");
+        updateCartDisplay();
+        document.getElementById("cart-count")?.textContent = "0";
+      })
+    );
+  }
+
+  updateCartDisplay();
+</script>
+
