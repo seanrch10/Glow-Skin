@@ -7,136 +7,101 @@
   <link rel="stylesheet" href="style.css" />
   <link rel="stylesheet" href="cart.css" />
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap" rel="stylesheet">
-  <style>
-    .checkout-btn {
-      display: inline-block;
-      background: #111;
-      color: #fff;
-      text-align: center;
-      padding: 1rem;
-      width: 100%;
-      margin-top: 2rem;
-      font-weight: 600;
-      font-size: 1rem;
-      border-radius: 30px;
-      text-decoration: none;
-      transition: background 0.3s ease, transform 0.2s ease;
-    }
-
-    .checkout-btn:hover {
-      background: #333;
-      transform: scale(1.02);
-    }
-  </style>
 </head>
 <body>
 
   <div class="cart-container">
     <h1>Your Cart</h1>
 
-<div class="cart-item">
-  <img src="https://i.ibb.co/nXFybhp/Laser-Hair-Removal-Drop-Shipping.jpg" alt="GlowSkin IPL" class="cart-image">
-  <div class="cart-item-details">
-    <h3>GlowSkin™ IPL Hair Removal Pen</h3>
-    <p>Color: Pink</p>
-    <p>Price: €59.99</p>
-  </div>
-</div>
+    <div id="cart-items"></div>
+    <div id="empty-cart" class="empty-cart" style="display: none;">Your cart is empty.</div>
+    <div id="cart-total" class="cart-total"></div>
 
-    <div class="cart-total">Total: €59.99</div>
-
-    <!-- ✅ Stripe Payment Link Button -->
     <a href="https://buy.stripe.com/dR6bKed8r5Al09y000" class="checkout-btn" target="_blank">Buy Now</a>
-
     <a href="index.html" class="go-back">← Continue Shopping</a>
   </div>
 
-<script>
-  let cart = JSON.parse(localStorage.getItem("glowskin_cart")) || [];
-  const cartItemsContainer = document.getElementById("cart-items");
-  const cartTotalDisplay = document.getElementById("cart-total");
-  const emptyCartMessage = document.getElementById("empty-cart");
+  <script>
+    let cart = JSON.parse(localStorage.getItem("glowskin_cart")) || [];
+    const cartItemsContainer = document.getElementById("cart-items");
+    const cartTotalDisplay = document.getElementById("cart-total");
+    const emptyCartMessage = document.getElementById("empty-cart");
 
-  function updateCartDisplay() {
-    cartItemsContainer.innerHTML = "";
-    let total = 0;
+    function updateCartDisplay() {
+      cartItemsContainer.innerHTML = "";
+      let total = 0;
 
-    if (cart.length === 0) {
-      emptyCartMessage.style.display = "block";
-      cartTotalDisplay.style.display = "none";
-      return;
+      if (cart.length === 0) {
+        emptyCartMessage.style.display = "block";
+        cartTotalDisplay.style.display = "none";
+        return;
+      }
+
+      emptyCartMessage.style.display = "none";
+      cartTotalDisplay.style.display = "block";
+
+      cart.forEach((item, index) => {
+        const itemDiv = document.createElement("div");
+        itemDiv.classList.add("cart-item");
+
+        itemDiv.innerHTML = `
+          <img src="https://i.ibb.co/nXFybhp/Laser-Hair-Removal-Drop-Shipping.jpg" alt="GlowSkin IPL" class="cart-image">
+          <div class="cart-item-details">
+            <h3>${item.name}</h3>
+            <p>Color: ${item.color}</p>
+            <p>Price: €${(item.price / 100).toFixed(2)}</p>
+            <div class="quantity-control">
+              <button class="decrease" data-index="${index}">–</button>
+              <span>${item.quantity}</span>
+              <button class="increase" data-index="${index}">+</button>
+            </div>
+            <button class="remove" data-index="${index}">Remove</button>
+          </div>
+        `;
+
+        cartItemsContainer.appendChild(itemDiv);
+        total += item.price * item.quantity;
+      });
+
+      cartTotalDisplay.textContent = `Total: €${(total / 100).toFixed(2)}`;
+
+      // Button logic
+      document.querySelectorAll(".increase").forEach(btn =>
+        btn.addEventListener("click", e => {
+          const index = e.target.dataset.index;
+          cart[index].quantity++;
+          saveAndRefresh();
+        })
+      );
+
+      document.querySelectorAll(".decrease").forEach(btn =>
+        btn.addEventListener("click", e => {
+          const index = e.target.dataset.index;
+          if (cart[index].quantity > 1) {
+            cart[index].quantity--;
+          } else {
+            cart.splice(index, 1);
+          }
+          saveAndRefresh();
+        })
+      );
+
+      document.querySelectorAll(".remove").forEach(btn =>
+        btn.addEventListener("click", e => {
+          const index = e.target.dataset.index;
+          cart.splice(index, 1);
+          saveAndRefresh();
+        })
+      );
     }
 
-    emptyCartMessage.style.display = "none";
-    cartTotalDisplay.style.display = "block";
+    function saveAndRefresh() {
+      localStorage.setItem("glowskin_cart", JSON.stringify(cart));
+      updateCartDisplay();
+    }
 
-    cart.forEach((item, index) => {
-      const itemDiv = document.createElement("div");
-      itemDiv.classList.add("cart-item");
-
-      itemDiv.innerHTML = `
-        <img src="https://i.ibb.co/nXFybhp/Laser-Hair-Removal-Drop-Shipping.jpg" alt="GlowSkin IPL" class="cart-image">
-        <div class="cart-item-details">
-          <h3>${item.name}</h3>
-          <p>Color: ${item.color}</p>
-          <p>Price: €${(item.price / 100).toFixed(2)}</p>
-          <div class="quantity-control">
-            <button class="decrease" data-index="${index}">–</button>
-            <span>${item.quantity}</span>
-            <button class="increase" data-index="${index}">+</button>
-          </div>
-          <button class="remove" data-index="${index}">Remove</button>
-        </div>
-      `;
-
-      cartItemsContainer.appendChild(itemDiv);
-      total += item.price * item.quantity;
-    });
-
-    cartTotalDisplay.textContent = `Total: €${(total / 100).toFixed(2)}`;
-
-    // Attach event listeners after rendering
-    document.querySelectorAll(".increase").forEach(btn =>
-      btn.addEventListener("click", e => {
-        const index = e.target.dataset.index;
-        cart[index].quantity++;
-        saveAndRefresh();
-      })
-    );
-
-    document.querySelectorAll(".decrease").forEach(btn =>
-      btn.addEventListener("click", e => {
-        const index = e.target.dataset.index;
-        if (cart[index].quantity > 1) {
-          cart[index].quantity--;
-        } else {
-          cart.splice(index, 1);
-        }
-        saveAndRefresh();
-      })
-    );
-
-    document.querySelectorAll(".remove").forEach(btn =>
-      btn.addEventListener("click", e => {
-        const index = e.target.dataset.index;
-        cart.splice(index, 1);
-        saveAndRefresh();
-      })
-    );
-  }
-
-  function saveAndRefresh() {
-    localStorage.setItem("glowskin_cart", JSON.stringify(cart));
     updateCartDisplay();
-  }
-
-  updateCartDisplay();
-</script>
-
-
+  </script>
 
 </body>
 </html>
-
-
-
