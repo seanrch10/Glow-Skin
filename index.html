@@ -46,43 +46,49 @@
     <p>&copy; 2025 GlowSkin™. All rights reserved.</p>
   </footer>
 
-  <script>
-    // ✅ Load the cart and count on page load
-    let cart = JSON.parse(localStorage.getItem("glowskin_cart")) || [];
-    const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-    document.getElementById("cart-count").textContent = cartCount;
-  
-    // ✅ Add to cart logic
-    document.getElementById("add-to-cart").addEventListener("click", () => {
-      const selectedVariant = document.getElementById("variant").value;
-  
-      const product = {
-        name: "GlowSkin™ IPL Hair Removal Pen",
-        price: 6999,
-        color: selectedVariant,
-        quantity: 1
-      };
-  
-      let cart = JSON.parse(localStorage.getItem("glowskin_cart")) || [];
-  
-      const existingItem = cart.find(item => item.name === product.name && item.color === product.color);
-  
-      if (existingItem) {
-        existingItem.quantity += 1;
-      } else {
-        cart.push(product);
-      }
-  
-      localStorage.setItem("glowskin_cart", JSON.stringify(cart));
-  
-      const updatedCount = cart.reduce((sum, item) => sum + item.quantity, 0);
-      document.getElementById("cart-count").textContent = updatedCount;
-    });
-  </script>
-  
-</body>
-</html>
+ <script>
+  let cart = JSON.parse(localStorage.getItem("glowskin_cart")) || [];
+  const cartIcon = document.querySelector(".cart-link");
+  const cartCountEl = document.getElementById("cart-count");
 
+  // Load initial count
+  const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  cartCountEl.textContent = totalCount;
 
+  document.getElementById("add-to-cart").addEventListener("click", () => {
+    const selectedVariant = document.getElementById("variant").value;
 
+    const product = {
+      name: "GlowSkin™ IPL Hair Removal Pen",
+      price: 6999,
+      color: selectedVariant,
+      quantity: 1
+    };
 
+    const existingItem = cart.find(
+      item => item.name === product.name && item.color === product.color
+    );
+
+    if (existingItem) {
+      existingItem.quantity += 1;
+    } else {
+      cart.push(product);
+    }
+
+    localStorage.setItem("glowskin_cart", JSON.stringify(cart));
+
+    // Update and animate count
+    const newCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+    cartCountEl.textContent = newCount;
+
+    // Trigger animations
+    cartIcon.classList.add("animated");
+    cartCountEl.classList.add("flash");
+
+    // Remove animation classes after they run
+    setTimeout(() => {
+      cartIcon.classList.remove("animated");
+      cartCountEl.classList.remove("flash");
+    }, 500);
+  });
+</script>
